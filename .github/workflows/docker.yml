@@ -5,8 +5,6 @@ on:
     branches:
       - master
       - main
-    tags:
-      - 'v*.*.*'
   pull_request:
     branches:
       - master
@@ -57,10 +55,6 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=${{ steps.cargo-version.outputs.version }}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=ref,event=branch
-            type=sha,format=short
 
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'

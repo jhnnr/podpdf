@@ -112,8 +112,7 @@ The repository includes `.github/workflows/docker.yml` for automated container b
 - `DOCKERHUB_TOKEN`: A Docker Hub Personal Access Token (PAT) with Read/Write permissions.
 
 **Automated Triggers:**
-- Pushes to `master` / `main` build, tag (`latest`, commit SHA), and push to Docker Hub.
-- Release tags (e.g. `v0.1.0`) build, semver tag (`v0.1.0`, `0.1`, `0`), and push.
+- Pushes to `master` / `main` build, tag (`latest` and the package version from `Cargo.toml`), and push to Docker Hub.
 - Pull requests build and verify the container with GitHub Actions caching (`type=gha`) without pushing.
 - Can be manually triggered via GitHub Actions `workflow_dispatch`.
 
