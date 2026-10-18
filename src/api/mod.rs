@@ -98,6 +98,7 @@ pub fn routes(config: &Config, auth: Arc<AuthManager>) -> Router {
 
     Router::new()
         .route("/", get(serve_index))
+        .route("/favicon.svg", get(favicon::serve_favicon))
         .route("/favicon.ico", get(favicon::serve_favicon))
         .route("/health", get(health::health_check))
         .nest("/api/v1", api_v1)
