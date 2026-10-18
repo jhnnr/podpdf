@@ -27,6 +27,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Extract Cargo.toml version
+        id: cargo-version
+        run: |
+          VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved Cargo package version: ${VERSION}"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -49,6 +56,7 @@ jobs:
           images: ${{ steps.repo-name.outputs.image }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ steps.cargo-version.outputs.version }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=ref,event=branch
