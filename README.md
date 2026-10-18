@@ -144,13 +144,12 @@ Configuration is managed solely through environment variables and the `.env` fil
 
 | Variable | Default | Description |
 |---|---|---|
-| `HOST_PORT` / `PORT` | `8080` | External host port mapped to the container (the container internally is hardened to port `8080`). |
-| `HOST` | `0.0.0.0` | Bind IP address. |
+| `HOST_PORT` | `8080` | External host port mapped to the container (the container internally is hardened to port `8080`). |
 | `MAX_PAYLOAD_SIZE` | `52428800` | Maximum upload size in bytes (50 MB default). |
 | `AUTH_ENABLED` | `true` | When `true`, enforces API key authentication on `/api/v1/pdf/*`. |
 | `CUSTOM_HEADERS` | `X-Content-Type-Options:nosniff;X-Frame-Options:DENY` | Semicolon-separated HTTP response headers. |
 | `RUST_LOG` | `info` | Logging filter (`error`, `warn`, `info`, `debug`, `trace`). |
-| `DOCKER_IMAGE` | `sugoi13/podpdf:latest` | Target Docker Hub image in `docker-compose.yml`. |
+
 
 ---
 
