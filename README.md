@@ -77,7 +77,7 @@ Prerequisites: [Rust 1.80+](https://www.rust-lang.org/) installed.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/podpdf.git
+git clone https://github.com/jhnnr/podpdf.git
 cd podpdf
 
 # Run the application
