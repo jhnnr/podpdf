@@ -1,7 +1,6 @@
 /target
 /data
 .env
-config.toml
 **/*.rs.bk
 *.swp
 *.bak

@@ -4,7 +4,7 @@ use std::env;
 use std::net::SocketAddr;
 use std::path::Path;
 
-/// Server runtime configuration loaded from file, environment variables, or .env file.
+/// Server runtime configuration loaded exclusively from .env and environment variables.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     pub host: String,
@@ -32,18 +32,10 @@ impl Default for Config {
 }
 
 impl Config {
-    /// Loads configuration from config.toml, .env, and system environment variables.
+    /// Loads configuration from .env and system environment variables.
     pub fn load() -> Self {
         let env_map = parse_env_file();
-
-        let mut config = if Path::new("config.toml").exists() {
-            match std::fs::read_to_string("config.toml") {
-                Ok(content) => toml::from_str(&content).unwrap_or_default(),
-                Err(_) => Self::default(),
-            }
-        } else {
-            Self::default()
-        };
+        let mut config = Self::default();
 
         let get_val = |key: &str| -> Option<String> {
             env::var(key).ok().or_else(|| env_map.get(key).cloned())
@@ -97,6 +89,53 @@ impl Config {
     /// Resolves the socket address configured for the server.
     pub fn socket_addr(&self) -> Result<SocketAddr, std::net::AddrParseError> {
         format!("{}:{}", self.host, self.port).parse()
+    }
+
+    /// Persists dynamic runtime configuration changes back to the .env file.
+    pub fn save_to_env(&self) {
+        let env_path = Path::new(".env");
+        let mut existing_lines: Vec<String> = if env_path.exists() {
+            std::fs::read_to_string(env_path)
+                .unwrap_or_default()
+                .lines()
+                .map(|s| s.to_string())
+                .collect()
+        } else {
+            Vec::new()
+        };
+
+        let headers_str = self
+            .custom_headers
+            .iter()
+            .map(|(k, v)| format!("{}:{}", k, v))
+            .collect::<Vec<_>>()
+            .join(";");
+
+        let updates: [(&str, String); 6] = [
+            ("HOST", self.host.clone()),
+            ("PORT", self.port.to_string()),
+            ("MAX_PAYLOAD_SIZE", self.max_payload_size.to_string()),
+            ("AUTH_ENABLED", self.auth_enabled.to_string()),
+            ("AUTH_STORE_PATH", self.auth_store_path.clone()),
+            ("CUSTOM_HEADERS", headers_str),
+        ];
+
+        for (key, val) in updates {
+            let prefix = format!("{}=", key);
+            let mut found = false;
+            for line in &mut existing_lines {
+                if line.trim_start().starts_with(&prefix) {
+                    *line = format!("{}={}", key, val);
+                    found = true;
+                    break;
+                }
+            }
+            if !found {
+                existing_lines.push(format!("{}={}", key, val));
+            }
+        }
+
+        let _ = std::fs::write(env_path, existing_lines.join("\n") + "\n");
     }
 }
 

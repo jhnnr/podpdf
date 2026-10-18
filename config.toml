@@ -1,8 +1,0 @@
-host = "0.0.0.0"
-port = 8080
-max_payload_size = 52428800
-log_level = "info"
-auth_enabled = false
-auth_store_path = 'C:\Users\johnn\AppData\Local\Temp\podpdf_auth_test_9678231313276607707.json'
-
-[custom_headers]

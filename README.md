@@ -135,40 +135,20 @@ docker run -d \
 
 ## ⚙️ Configuration
 
-Configuration is managed through environment variables (`.env`) and `config.toml`.
+Configuration is managed solely through environment variables and the `.env` file (copy `.example.env` to `.env` to customize).
 
 ### Environment Variables (`.env`)
 
 | Variable | Default | Description |
 |---|---|---|
-| `PORT` | `8080` | Port for the HTTP web server. |
+| `HOST_PORT` / `PORT` | `8080` | External host port mapped to the container (the container internally is hardened to port `8080`). |
 | `HOST` | `0.0.0.0` | Bind IP address. |
 | `MAX_PAYLOAD_SIZE` | `52428800` | Maximum upload size in bytes (50 MB default). |
 | `AUTH_ENABLED` | `true` | When `true`, enforces API key authentication on `/api/v1/pdf/*`. |
 | `AUTH_STORE_PATH` | `data/auth_store.json` | Persistent user accounts and hashed API keys file path. |
 | `CUSTOM_HEADERS` | `X-Content-Type-Options:nosniff;X-Frame-Options:DENY` | Semicolon-separated HTTP response headers. |
 | `RUST_LOG` | `info` | Logging filter (`error`, `warn`, `info`, `debug`, `trace`). |
-| `DOCKER_IMAGE` | `podpdf/podpdf:latest` | Target Docker Hub image in `docker-compose.yml`. |
-
-### Configuration File (`config.toml`)
-
-Copy the template to get started:
-```bash
-cp config.example.toml config.toml
-```
-
-```toml
-host = "0.0.0.0"
-port = 8080
-max_payload_size = 52428800
-log_level = "info"
-auth_enabled = true
-auth_store_path = "data/auth_store.json"
-
-[custom_headers]
-X-Content-Type-Options = "nosniff"
-X-Frame-Options = "DENY"
-```
+| `DOCKER_IMAGE` | `sugoi13/podpdf:latest` | Target Docker Hub image in `docker-compose.yml`. |
 
 ---
 
@@ -189,7 +169,7 @@ To generate an API key:
 
 ### Custom HTTP Response Headers
 Inject security and compliance headers (`Content-Security-Policy`, `X-Frame-Options`, `Cache-Control`) across all responses:
-- Configurable via `.env` (`CUSTOM_HEADERS`), `config.toml` (`[custom_headers]`), or dynamically via **Settings > HTTP Headers**.
+- Configurable via `.env` (`CUSTOM_HEADERS`) or dynamically via **Settings > HTTP Headers**.
 
 ---
 

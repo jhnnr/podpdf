@@ -222,13 +222,7 @@ pub async fn toggle_security_mode_handler(
 
     let mut config = state.config.write().await;
     config.auth_enabled = payload.enabled;
-
-    if std::path::Path::new("config.toml").exists() {
-        let _ = std::fs::write(
-            "config.toml",
-            toml::to_string_pretty(&*config).unwrap_or_default(),
-        );
-    }
+    config.save_to_env();
 
     Ok(Json(ToggleSecurityResponse {
         success: true,
@@ -252,13 +246,7 @@ pub async fn update_custom_headers_handler(
 
     let mut conf = state.config.write().await;
     conf.custom_headers = payload.headers;
-
-    if std::path::Path::new("config.toml").exists() {
-        let _ = std::fs::write(
-            "config.toml",
-            toml::to_string_pretty(&*conf).unwrap_or_default(),
-        );
-    }
+    conf.save_to_env();
 
     Ok(Json(SuccessResponse {
         success: true,

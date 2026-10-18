@@ -78,7 +78,7 @@ This project is a web application written in Rust, providing a suite of tools fo
 - **API Controllers**: API endpoints organized by function, following REST principles.
 - **PDF Processing**: A core library in Rust for all PDF manipulation tasks.
 - **Frontend**: A modern, lightweight Single-Page Application (SPA) that interacts with the backend API.
-- **Configuration**: Configuration is managed through a configuration file (e.g., `config.toml`) and environment variables.
+- **Configuration**: Configuration is managed through environment variables and the `.env` file.
 
 ### Testing Strategy
 
