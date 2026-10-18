@@ -1,8 +1,19 @@
-# <img src="docs/logo.svg" width="36" height="36" alt="PodPdf Logo" valign="middle"> PodPdf
-
-**A Lightweight, Privacy-First, Desktop-Grade PDF Processing Suite in Pure Rust.**
-
-[Features](#-features--tool-catalog) &bull; [Quickstart](#-quickstart) &bull; [Docker](#-docker-deployment) &bull; [Security](#-security-api-keys) &bull; [API Docs](docs/api.md)
+<div align="center">
+  <h1>
+    <img src="docs/logo.svg" width="38" height="38" alt="PodPdf Logo" valign="middle" style="vertical-align: middle; margin-right: 8px;">
+    PodPdf
+  </h1>
+  <p>
+    <strong>A Lightweight, Privacy-First, Desktop-Grade PDF Processing Suite in Pure Rust.</strong>
+  </p>
+  <p>
+    <a href="#-features--tool-catalog">Features</a> &bull;
+    <a href="#-quickstart">Quickstart</a> &bull;
+    <a href="#-docker-deployment">Docker</a> &bull;
+    <a href="#-security--api-keys">Security</a> &bull;
+    <a href="docs/api.md">API Docs</a>
+  </p>
+</div>
 
 ---
 
