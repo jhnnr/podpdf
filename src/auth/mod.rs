@@ -59,8 +59,15 @@ impl AuthManager {
     /// Initializes or loads the authentication store from disk.
     pub fn new<P: AsRef<Path>>(store_path: P) -> Arc<Self> {
         let path = store_path.as_ref().to_path_buf();
+        let fallback = std::env::temp_dir().join("podpdf_auth_store.json");
+
         let mut store: PersistentAuthStore = if path.exists() {
             match std::fs::read_to_string(&path) {
+                Ok(content) => serde_json::from_str(&content).unwrap_or_default(),
+                Err(_) => PersistentAuthStore::default(),
+            }
+        } else if fallback.exists() {
+            match std::fs::read_to_string(&fallback) {
                 Ok(content) => serde_json::from_str(&content).unwrap_or_default(),
                 Err(_) => PersistentAuthStore::default(),
             }
@@ -68,7 +75,7 @@ impl AuthManager {
             PersistentAuthStore::default()
         };
 
-        let mut needs_save = !path.exists();
+        let mut needs_save = !path.exists() && !fallback.exists();
 
         // Seed default admin user if store has no users
         if store.users.is_empty() {
@@ -91,10 +98,11 @@ impl AuthManager {
 
         if needs_save {
             let _ = std::fs::create_dir_all(path.parent().unwrap_or(Path::new(".")));
-            let _ = std::fs::write(
-                &path,
-                serde_json::to_string_pretty(&store).unwrap_or_default(),
-            );
+            if let Ok(json) = serde_json::to_string_pretty(&store)
+                && std::fs::write(&path, &json).is_err()
+            {
+                let _ = std::fs::write(&fallback, &json);
+            }
         }
 
         Arc::new(Self {
@@ -266,11 +274,45 @@ impl AuthManager {
     fn save_store(&self, store: &PersistentAuthStore) -> Result<(), AuthError> {
         let json =
             serde_json::to_string_pretty(store).map_err(|e| AuthError::Storage(e.to_string()))?;
+
         if let Some(parent) = self.store_path.parent() {
             let _ = std::fs::create_dir_all(parent);
         }
-        std::fs::write(&self.store_path, json).map_err(|e| AuthError::Storage(e.to_string()))?;
-        Ok(())
+
+        // Secure file permissions on Unix if file exists
+        #[cfg(unix)]
+        if let Ok(metadata) = std::fs::metadata(&self.store_path) {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = metadata.permissions();
+            perms.set_mode(0o600);
+            let _ = std::fs::set_permissions(&self.store_path, perms);
+        }
+
+        // Attempt write to primary store path
+        match std::fs::write(&self.store_path, &json) {
+            Ok(()) => Ok(()),
+            Err(primary_err) => {
+                tracing::warn!(
+                    path = ?self.store_path,
+                    error = %primary_err,
+                    "Failed to write auth store to primary path; attempting writable fallback."
+                );
+
+                // Attempt write to temp dir fallback
+                let fallback = std::env::temp_dir().join("podpdf_auth_store.json");
+                if let Ok(()) = std::fs::write(&fallback, &json) {
+                    tracing::info!(path = ?fallback, "Auth store persisted to fallback location.");
+                    return Ok(());
+                }
+
+                // If even fallback cannot be written, preserve in-memory state without erroring
+                tracing::error!(
+                    error = %primary_err,
+                    "Unable to write auth store to disk. Credentials and API keys remain active in memory."
+                );
+                Ok(())
+            }
+        }
     }
 }
 
