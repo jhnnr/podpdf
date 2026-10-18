@@ -1,0 +1,30 @@
+[package]
+name = "podpdf"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "podpdf"
+path = "src/lib.rs"
+
+[[bin]]
+name = "podpdf"
+path = "src/main.rs"
+
+[dependencies]
+axum = { version = "0.8.9", features = ["multipart"] }
+bytes = "1.10"
+image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "webp", "bmp"] }
+lopdf = "0.45.0"
+rand = "0.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.11"
+thiserror = "2.0"
+tokio = { version = "1.53.3", features = ["full"] }
+toml = "0.8"
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+zip = { version = "2.2", default-features = false, features = ["deflate"] }

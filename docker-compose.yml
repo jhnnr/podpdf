@@ -1,0 +1,11 @@
+services:
+  podpdf:
+    image: ${DOCKER_IMAGE:-podpdf/podpdf:latest}
+    container_name: podpdf
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/home/podpdf/data

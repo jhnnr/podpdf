@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PodPdf - Privacy-First PDF Suite</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg-app: #18181b;
+      --bg-sidebar: #202024;
+      --bg-panel: #27272a;
+      --bg-card: #2e2e33;
+      --bg-card-hover: #38383f;
+      --border-color: #3f3f46;
+      --border-focus: #e11d48;
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #f43f5e;
+      --accent-hover: #e11d48;
+      --accent-soft: rgba(244, 63, 94, 0.12);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.15);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    [data-theme="light"] {
+      --bg-app: #f4f4f5;
+      --bg-sidebar: #ffffff;
+      --bg-panel: #ffffff;
+      --bg-card: #f9fafb;
+      --bg-card-hover: #f3f4f6;
+      --border-color: #e5e7eb;
+      --border-focus: #e11d48;
+      --text-main: #18181b;
+      --text-muted: #71717a;
+      --text-dim: #a1a1aa;
+      --accent: #e11d48;
+      --accent-hover: #be123c;
+      --accent-soft: rgba(225, 29, 72, 0.08);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.1);
+      --success: #16a34a;
+      --success-soft: rgba(22, 163, 74, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .icon {
+      width: 1.15rem;
+      height: 1.15rem;
+      display: inline-block;
+      vertical-align: middle;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ========================================================
+       1. Login Gate Screen
+       ======================================================== */
+    #login-gate {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: radial-gradient(circle at 50% 30%, rgba(244, 63, 94, 0.08), transparent 70%), var(--bg-app);
+    }
+
+    .login-box {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .login-brand-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.5rem;
+    }
+
+    .login-logo {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.6rem;
+      box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.75rem 0.95rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-control:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.8rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s;
+    }
+
+    .btn-primary:hover:not(:disabled) { background-color: var(--accent-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .alert {
+      padding: 0.75rem 0.9rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .alert.error {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--danger-soft);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+
+    .alert.success {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--success-soft);
+      border: 1px solid var(--success);
+      color: #86efac;
+    }
+
+    /* ========================================================
+       2. Main Workspace (Authenticated)
+       ======================================================== */
+    #authenticated-app {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top App Bar */
+    .app-header {
+      background-color: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border-color);
+      height: 52px;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+    }
+
+    .app-badge {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .brand-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .header-search-wrap {
+      flex: 1;
+      max-width: 440px;
+      position: relative;
+    }
+
+    .header-search {
+      width: 100%;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.45rem 2.2rem 0.45rem 2.2rem;
+      border-radius: 18px;
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    .header-search:focus { border-color: var(--border-focus); }
+
+    .search-icon-pos {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--bg-card);
+      border-color: var(--accent);
+    }
+
+    /* Main Workspace Split (Sidebar + Canvas) */
+    .app-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 52px);
+      overflow: hidden;
+    }
+
+    /* Sidebar (Left: Tools Drawer) */
+    .app-sidebar {
+      width: 290px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 1rem 1.25rem 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-category {
+      margin-bottom: 0.75rem;
+    }
+
+    .category-label {
+      padding: 0.5rem 1.25rem 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .sidebar-item:hover {
+      background-color: var(--bg-panel);
+      color: var(--text-main);
+    }
+
+    .sidebar-item.active {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Canvas / Central Workspace (Right) */
+    .app-workspace {
+      flex: 1;
+      background-color: var(--bg-app);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 2rem;
+      align-items: center;
+    }
+
+    .workspace-wrapper {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Hero Upload Card */
+    .hero-upload-card {
+      background-color: var(--bg-panel);
+      border: 2px dashed var(--border-color);
+      border-radius: 16px;
+      padding: 4rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+    }
+
+    .hero-upload-card:hover, .hero-upload-card.dragover {
+      border-color: var(--accent);
+      background-color: var(--accent-soft);
+      transform: translateY(-2px);
+    }
+
+    .upload-icon-circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 16px rgba(244, 63, 94, 0.15);
+    }
+
+    .upload-icon-circle svg { width: 34px; height: 34px; }
+
+    .upload-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .upload-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    /* Active Document Dock (When PDF is loaded) */
+    .active-doc-dock {
+      display: none;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.1rem 1.4rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .doc-dock-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .doc-icon-frame {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .doc-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .doc-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* General Tools Showcase Grid on Landing (Shown After Document is Loaded) */
+    .tools-hub-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .hub-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .hub-card {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.15s;
+    }
+
+    .hub-card:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hub-card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hub-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Focused Tool Action Panel (Opened When User Chooses a Tool) */
+    .focused-tool-panel {
+      display: none;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.85rem;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .panel-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .panel-header-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Multi-file Queue */
+    .file-queue {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .queue-chip {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.86rem;
+    }
+
+    .chip-btns {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-xs {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.78rem;
+    }
+
+    .btn-xs:hover { background-color: var(--bg-card-hover); }
+    .btn-xs.danger { color: var(--danger); }
+
+    /* Modals */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-box {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-card);
+    }
+
+    .modal-tab-btn {
+      flex: 1;
+      padding: 0.75rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+
+    .modal-tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background-color: var(--bg-panel);
+    }
+
+    .modal-content { padding: 1.5rem; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .data-table th, .data-table td {
+      border: 1px solid var(--border-color);
+      padding: 0.65rem 0.8rem;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    .data-table th { background-color: var(--bg-card); color: var(--text-muted); }
+
+    .file-input { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================
+       1. Login Gate Screen
+       ======================================================== -->
+  <div id="login-gate">
+    <div class="login-box">
+      <div class="login-brand-header">
+        <div class="login-logo">P</div>
+        <h1 style="font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em;">PodPdf</h1>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Privacy-First PDF Workspace</p>
+      </div>
+
+      <div style="background-color: var(--accent-soft); border: 1px solid var(--accent); padding: 0.65rem 0.85rem; border-radius: 8px; font-size: 0.8rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <span>Default credentials: <strong>admin@podpdf.local</strong> / <strong>admin</strong></span>
+      </div>
+
+      <form onsubmit="handleLogin(event)" style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-control" value="admin@podpdf.local" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" value="admin" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="login-btn" class="btn-primary" style="margin-top: 0.5rem;">
+          Login
+        </button>
+      </form>
+
+      <div id="login-alert" class="alert"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       2. Main Workspace (Authenticated)
+       ======================================================== -->
+  <div id="authenticated-app">
+    <!-- Top App Bar -->
+    <header class="app-header">
+      <div class="header-brand" onclick="showLandingView()">
+        <div class="app-badge">P</div>
+        <span class="brand-name">PodPdf</span>
+      </div>
+
+      <div class="header-search-wrap">
+        <svg class="icon search-icon-pos" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="sidebar-search" class="header-search" placeholder="Search tools (Merge, Split, Rotate, Compress, Redact)..." oninput="filterSidebarTools()">
+      </div>
+
+      <div class="header-controls">
+        <button class="nav-btn" onclick="toggleTheme()" title="Toggle Theme">
+          <svg class="icon" id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="nav-btn" onclick="openSettingsModal()">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+        <button class="nav-btn" onclick="handleLogout()">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span id="header-user">admin</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- App Body: Sidebar + Main Workspace -->
+    <div class="app-body">
+      <!-- Left Sidebar (Tools Drawer) -->
+      <aside class="app-sidebar">
+        <div class="sidebar-header">
+          <span>PDF Tools</span>
+          <button class="nav-btn" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="showLandingView()">Home</button>
+        </div>
+
+        <div id="sidebar-tools-tree"></div>
+      </aside>
+
+      <!-- Right Main Workspace -->
+      <main class="app-workspace">
+        <div class="workspace-wrapper">
+
+          <!-- SECTION A: General Landing View (Dropzone + Active Dock + Tools Grid) -->
+          <div id="landing-view" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- 1. Centered Hero Upload Zone (Clean, No Choose Files Button) -->
+            <div class="hero-upload-card" id="hero-dropzone" onclick="document.getElementById('file-input').click()">
+              <div class="upload-icon-circle">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div>
+                <h2 class="upload-title" id="dropzone-header">Upload a PDF to Start Working</h2>
+                <p class="upload-desc" id="dropzone-subtitle">Drag and drop your PDF here, or click anywhere inside this box to browse files. Once uploaded, pick any feature from the sidebar or below to process it.</p>
+              </div>
+              <input type="file" id="file-input" class="file-input">
+            </div>
+
+            <!-- 2. Active Document Dock (Appears when document is loaded) -->
+            <div class="active-doc-dock" id="active-doc-dock">
+              <div class="doc-dock-left">
+                <div class="doc-icon-frame">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div>
+                  <div class="doc-name" id="dock-file-name">document.pdf</div>
+                  <div class="doc-meta" id="dock-file-meta">512 KB &bull; Loaded in Memory &bull; Ready for Tools</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="nav-btn" onclick="document.getElementById('file-input').click()">Replace Document</button>
+                <button class="nav-btn" style="color: var(--danger);" onclick="clearLoadedDocument()">Clear</button>
+              </div>
+            </div>
+
+            <div id="landing-ready-hint" style="display: none; background-color: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 1.25rem; text-align: center;">
+              <p style="font-weight: 700; font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.35rem;">Document Loaded in Memory</p>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">Select any tool in the sidebar on the left to process this document.</p>
+            </div>
+          </div>
+
+          <!-- SECTION B: Focused Tool Workspace (Only shown when a tool is selected!) -->
+          <div class="focused-tool-panel" id="focused-tool-panel">
+            <div class="panel-header-row">
+              <div class="panel-header-title">
+                <span id="tool-icon-slot"></span>
+                <span id="panel-tool-name">Tool Name</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;" id="panel-category-tag">Category</span>
+                <button class="nav-btn" onclick="showLandingView()">
+                  <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Back to Files
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Document Status Bar Inside Tool Panel -->
+            <div id="panel-active-doc" style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                <span>Working on: <strong id="panel-doc-name">No file selected</strong></span>
+              </div>
+              <button class="nav-btn" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="document.getElementById('file-input').click()">Change File</button>
+            </div>
+
+            <!-- Multi-file queue for tools like Merge, Images, Compare -->
+            <div id="multi-file-queue" style="display: none;">
+              <div class="file-queue" id="file-queue-list"></div>
+            </div>
+
+            <!-- Dynamic Tool Form Options -->
+            <div id="dynamic-tool-options"></div>
+
+            <button id="process-doc-btn" class="btn-primary" onclick="executeCurrentTool()">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span id="process-btn-text">Process Document</span>
+            </button>
+
+            <div id="workspace-alert" class="alert"></div>
+
+            <div id="workspace-results" style="margin-top: 0.5rem;"></div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-backdrop" id="settings-modal" onclick="closeOnBackdrop(event, 'settings-modal')">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span style="font-weight: 700; font-size: 1.1rem;">PodPdf Settings</span>
+          </div>
+          <button class="btn-xs" onclick="closeModal('settings-modal')">&times;</button>
+        </div>
+
+        <div class="modal-tabs">
+          <button class="modal-tab-btn active" onclick="switchSettingsTab('account', event)">Account</button>
+          <button class="modal-tab-btn" onclick="switchSettingsTab('apikeys', event)">API Keys</button>
+          <button class="modal-tab-btn" onclick="switchSettingsTab('headers', event)">HTTP Headers</button>
+          <button class="modal-tab-btn" onclick="switchSettingsTab('system', event)">System Info</button>
+        </div>
+
+        <div class="modal-content" id="tab-account">
+          <div class="form-group">
+            <label for="set-new-email">Change Email Address</label>
+            <input type="email" id="set-new-email" class="form-control" placeholder="new.email@example.com">
+          </div>
+          <div class="form-group">
+            <label for="set-cur-password">Current Password (Required)</label>
+            <input type="password" id="set-cur-password" class="form-control" required autocomplete="current-password">
+          </div>
+          <div class="form-group">
+            <label for="set-new-password">New Password</label>
+            <input type="password" id="set-new-password" class="form-control" placeholder="At least 4 characters" autocomplete="new-password">
+          </div>
+          <button class="btn-primary" onclick="saveCredentials()">Save Changes</button>
+          <div id="set-account-alert" class="alert"></div>
+        </div>
+
+        <div class="modal-content" id="tab-apikeys" style="display: none;">
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Generate programmatic keys for automated scripts and CI/CD pipelines via <code>X-API-Key</code>.
+          </p>
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <input type="text" id="new-key-name" class="form-control" placeholder="Key name (e.g. CI Runner)">
+            <button class="btn-primary" style="width: auto; white-space: nowrap;" onclick="createApiKey()">Generate</button>
+          </div>
+          <div id="new-key-display" style="display: none; margin-bottom: 1rem; padding: 0.85rem; background-color: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--radius-sm);">
+            <p style="font-size: 0.82rem; font-weight: 700; margin-bottom: 0.35rem;">Copy your API Key now:</p>
+            <input type="text" id="new-key-value" class="form-control" readonly style="font-family: monospace; font-size: 0.85rem;">
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Name</th><th>Prefix</th><th>Created</th><th>Action</th></tr>
+            </thead>
+            <tbody id="keys-tbody"></tbody>
+          </table>
+          <div id="set-keys-alert" class="alert"></div>
+        </div>
+
+        <div class="modal-content" id="tab-headers" style="display: none;">
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">
+            Configure custom HTTP response headers injected into all server responses (can also be defined via <code>.env</code> or <code>config.toml</code>).
+          </p>
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <input type="text" id="new-header-key" class="form-control" placeholder="Header (e.g. X-Frame-Options)" style="flex:1;">
+            <input type="text" id="new-header-val" class="form-control" placeholder="Value (e.g. DENY)" style="flex:1;">
+            <button class="btn-primary" style="width: auto; white-space: nowrap;" onclick="addCustomHeaderItem()">Add</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Header Name</th><th>Value</th><th>Action</th></tr>
+            </thead>
+            <tbody id="headers-tbody"></tbody>
+          </table>
+          <button class="btn-primary" style="margin-top: 1rem;" onclick="saveCustomHeaders()">Save Custom Headers</button>
+          <div id="set-headers-alert" class="alert"></div>
+        </div>
+
+        <div class="modal-content" id="tab-system" style="display: none;">
+          <table class="data-table">
+            <tr><th>Application</th><td>PodPdf</td></tr>
+            <tr><th>Version</th><td id="sys-version">0.1.0</td></tr>
+            <tr><th>Telemetry</th><td>None &bull; 100% Stateless &amp; Offline</td></tr>
+            <tr>
+              <th>Security Mode</th>
+              <td>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
+                  <span id="sys-auth" style="font-weight: 700;">Active (API Key Required)</span>
+                  <button class="nav-btn" id="toggle-security-btn" style="padding: 0.25rem 0.65rem; font-size: 0.8rem;" onclick="toggleSecurityMode()">Disable</button>
+                </div>
+              </td>
+            </tr>
+            <tr><th>Max Upload Size</th><td>50 MB</td></tr>
+          </table>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.85rem; line-height: 1.4;">
+            <strong>Note on Security Mode:</strong> When active, all HTTP endpoints under <code>/api/v1/pdf/*</code> strictly require authentication using a valid programmatic API key (<code>X-API-Key</code>). When disabled, endpoints are open.
+          </p>
+          <div id="sys-toggle-alert" class="alert" style="margin-top: 0.75rem;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let sessionToken = sessionStorage.getItem('podpdf_token') || '';
+    let currentUsername = sessionStorage.getItem('podpdf_user') || '';
+    let currentToolId = 'rotate';
+    let loadedFiles = [];
+
+    // Vector SVG Icons Dictionary
+    const toolIcons = {
+      merge: `<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`,
+      split: `<svg class="icon" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`,
+      rotate: `<svg class="icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
+      extract: `<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><polyline points="12 9 8 13 12 17"/></svg>`,
+      remove: `<svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`,
+      reorder: `<svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><polyline points="14 14 18 10 22 14"/><line x1="6" y1="4" x2="6" y2="14"/><polyline points="10 10 6 14 2 10"/></svg>`,
+      reverse: `<svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`,
+      crop: `<svg class="icon" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>`,
+      scale: `<svg class="icon" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`,
+      watermark: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
+      pagenumbers: `<svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`,
+      imagetopdf: `<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+      texttopdf: `<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+      pdftotext: `<svg class="icon" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
+      extractimages: `<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+      encrypt: `<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+      decrypt: `<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`,
+      flatten: `<svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+      redact: `<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="1" ry="1"/><line x1="6" y1="12" x2="18" y2="12"/></svg>`,
+      compress: `<svg class="icon" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>`,
+      metadata: `<svg class="icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
+      compare: `<svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="4"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`
+    };
+
+    // Organized Tool Hierarchy
+    const toolsTree = [
+      {
+        cat: 'organize',
+        label: 'Organize Pages',
+        items: [
+          { id: 'merge', title: 'Merge PDFs', multiple: true, accept: '.pdf' },
+          { id: 'split', title: 'Split Document', multiple: false, accept: '.pdf' },
+          { id: 'rotate', title: 'Rotate Pages', multiple: false, accept: '.pdf' },
+          { id: 'extract', title: 'Extract Pages', multiple: false, accept: '.pdf' },
+          { id: 'remove', title: 'Delete Pages', multiple: false, accept: '.pdf' },
+          { id: 'reorder', title: 'Reorder Pages', multiple: false, accept: '.pdf' },
+          { id: 'reverse', title: 'Reverse Sequence', multiple: false, accept: '.pdf' },
+          { id: 'crop', title: 'Crop Margins', multiple: false, accept: '.pdf' },
+          { id: 'scale', title: 'Page Dimensions', multiple: false, accept: '.pdf' }
+        ]
+      },
+      {
+        cat: 'edit',
+        label: 'Edit & Stamp',
+        items: [
+          { id: 'watermark', title: 'Add Watermark', multiple: false, accept: '.pdf' },
+          { id: 'pagenumbers', title: 'Page Numbering', multiple: false, accept: '.pdf' },
+          { id: 'redact', title: 'Auto-Redact', multiple: false, accept: '.pdf' },
+          { id: 'flatten', title: 'Flatten Annotations', multiple: false, accept: '.pdf' }
+        ]
+      },
+      {
+        cat: 'convert',
+        label: 'Convert & Export',
+        items: [
+          { id: 'imagetopdf', title: 'Images to PDF', multiple: true, accept: 'image/*' },
+          { id: 'texttopdf', title: 'Text to PDF', multiple: false, accept: '.txt' },
+          { id: 'pdftotext', title: 'PDF to Text', multiple: false, accept: '.pdf' },
+          { id: 'extractimages', title: 'Extract Images', multiple: false, accept: '.pdf' }
+        ]
+      },
+      {
+        cat: 'protect',
+        label: 'Protect & Optimize',
+        items: [
+          { id: 'encrypt', title: 'Password Protect', multiple: false, accept: '.pdf' },
+          { id: 'decrypt', title: 'Unlock / Decrypt', multiple: false, accept: '.pdf' },
+          { id: 'compress', title: 'Compress & Optimize', multiple: false, accept: '.pdf' }
+        ]
+      },
+      {
+        cat: 'inspect',
+        label: 'Inspect & Compare',
+        items: [
+          { id: 'metadata', title: 'Document Metadata', multiple: false, accept: '.pdf' },
+          { id: 'compare', title: 'Compare Documents', multiple: true, accept: '.pdf' }
+        ]
+      }
+    ];
+
+    // Tool Form HTML Options
+    const toolOptionForms = {
+      rotate: `
+        <div class="form-group">
+          <label>Rotation Direction</label>
+          <select id="opt-rotate-angle" class="form-control">
+            <option value="90">90&deg; Clockwise</option>
+            <option value="180">180&deg; Upside Down</option>
+            <option value="270">270&deg; Clockwise (90&deg; Counter-clockwise)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Apply to Pages (leave blank for all pages)</label>
+          <input type="text" id="opt-rotate-pages" class="form-control" placeholder="e.g. 1, 3, 5-7">
+        </div>
+      `,
+      split: `
+        <div class="form-group">
+          <label>Page Range Split (leave empty to split into individual pages)</label>
+          <input type="text" id="opt-split-ranges" class="form-control" placeholder="e.g. 1-2, 3, 4-5">
+        </div>
+      `,
+      extract: `
+        <div class="form-group">
+          <label>Pages to Extract (required)</label>
+          <input type="text" id="opt-extract-pages" class="form-control" placeholder="e.g. 1, 3, 5">
+        </div>
+      `,
+      remove: `
+        <div class="form-group">
+          <label>Pages to Remove (required)</label>
+          <input type="text" id="opt-remove-pages" class="form-control" placeholder="e.g. 2, 4">
+        </div>
+      `,
+      reorder: `
+        <div class="form-group">
+          <label>New Page Sequence Order</label>
+          <input type="text" id="opt-reorder-pages" class="form-control" placeholder="e.g. 3, 1, 2">
+        </div>
+      `,
+      crop: `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group"><label>Top Margin (pt)</label><input type="number" id="opt-crop-top" class="form-control" value="20"></div>
+          <div class="form-group"><label>Bottom Margin (pt)</label><input type="number" id="opt-crop-bottom" class="form-control" value="20"></div>
+          <div class="form-group"><label>Left Margin (pt)</label><input type="number" id="opt-crop-left" class="form-control" value="20"></div>
+          <div class="form-group"><label>Right Margin (pt)</label><input type="number" id="opt-crop-right" class="form-control" value="20"></div>
+        </div>
+      `,
+      scale: `
+        <div class="form-group">
+          <label>Target Page Dimensions</label>
+          <select id="opt-scale-size" class="form-control">
+            <option value="A4">A4 (595 &times; 842 pt)</option>
+            <option value="Letter">Letter (612 &times; 792 pt)</option>
+            <option value="A3">A3 (842 &times; 1191 pt)</option>
+            <option value="Legal">Legal (612 &times; 1008 pt)</option>
+          </select>
+        </div>
+      `,
+      watermark: `
+        <div class="form-group">
+          <label>Watermark Text</label>
+          <input type="text" id="opt-wm-text" class="form-control" value="CONFIDENTIAL">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group"><label>Font Size</label><input type="number" id="opt-wm-size" class="form-control" value="48"></div>
+          <div class="form-group"><label>Rotation Angle</label><input type="number" id="opt-wm-angle" class="form-control" value="45"></div>
+        </div>
+        <div class="form-group"><label>Pages (leave blank for all)</label><input type="text" id="opt-wm-pages" class="form-control" placeholder="e.g. 1, 2"></div>
+      `,
+      pagenumbers: `
+        <div class="form-group">
+          <label>Position</label>
+          <select id="opt-pn-pos" class="form-control">
+            <option value="bottom-center">Bottom Center</option>
+            <option value="bottom-right">Bottom Right</option>
+            <option value="top-right">Top Right</option>
+            <option value="top-center">Top Center</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Format Template</label>
+          <input type="text" id="opt-pn-fmt" class="form-control" value="Page {n} of {total}">
+        </div>
+      `,
+      texttopdf: `
+        <div class="form-group">
+          <label>Enter or paste text directly:</label>
+          <textarea id="opt-text-val" class="form-control" rows="6" placeholder="Type text here..."></textarea>
+        </div>
+      `,
+      encrypt: `
+        <div class="form-group"><label>User View Password</label><input type="password" id="opt-enc-pass" class="form-control" placeholder="Required password to view"></div>
+        <div class="form-group"><label>Owner Password (optional)</label><input type="password" id="opt-enc-owner" class="form-control" placeholder="Full permissions password"></div>
+      `,
+      decrypt: `
+        <div class="form-group"><label>Decryption Password</label><input type="password" id="opt-dec-pass" class="form-control" placeholder="Enter document password"></div>
+      `,
+      redact: `
+        <div class="form-group"><label>Sensitive Terms to Redact (comma-separated)</label><input type="text" id="opt-redact-terms" class="form-control" placeholder="e.g. Secret, Confidential, 555-1234"></div>
+      `,
+      metadata: `
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+          <button class="nav-btn" type="button" onclick="readMetaAction()" style="flex:1; justify-content:center;">Inspect Metadata</button>
+          <button class="nav-btn" type="button" onclick="stripMetaAction()" style="flex:1; justify-content:center; border-color: var(--danger); color: #fca5a5;">Strip All</button>
+        </div>
+        <div class="form-group"><label>Title</label><input type="text" id="opt-meta-title" class="form-control"></div>
+        <div class="form-group"><label>Author</label><input type="text" id="opt-meta-author" class="form-control"></div>
+        <div class="form-group"><label>Subject</label><input type="text" id="opt-meta-subject" class="form-control"></div>
+        <div class="form-group"><label>Keywords</label><input type="text" id="opt-meta-keywords" class="form-control"></div>
+      `,
+      compare: `
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Compare two PDF documents across metadata, size, page counts, and extracted text.</p>
+      `
+    };
+
+    // Build Sidebar
+    function buildSidebarTree() {
+      const treeEl = document.getElementById('sidebar-tools-tree');
+      treeEl.innerHTML = '';
+      const filter = document.getElementById('sidebar-search').value.toLowerCase().trim();
+
+      toolsTree.forEach(group => {
+        const matches = group.items.filter(item => !filter || item.title.toLowerCase().includes(filter));
+        if (matches.length === 0) return;
+
+        const catDiv = document.createElement('div');
+        catDiv.className = 'sidebar-category';
+        catDiv.innerHTML = `<div class="category-label">${group.label}</div>`;
+
+        matches.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = `sidebar-item ${item.id === currentToolId ? 'active' : ''}`;
+          itemDiv.onclick = () => selectSidebarTool(item.id, group.label);
+          itemDiv.innerHTML = `
+            ${toolIcons[item.id] || toolIcons.merge}
+            <span>${item.title}</span>
+          `;
+          catDiv.appendChild(itemDiv);
+        });
+
+        treeEl.appendChild(catDiv);
+      });
+    }
+
+    function filterSidebarTools() { buildSidebarTree(); }
+
+    // Navigation state switches
+    function showLandingView() {
+      document.getElementById('landing-view').style.display = 'flex';
+      document.getElementById('focused-tool-panel').style.display = 'none';
+      updateDocumentDock();
+    }
+
+    function selectSidebarTool(toolId, categoryLabel) {
+      currentToolId = toolId;
+      buildSidebarTree();
+
+      let targetItem = null;
+      let catLabel = categoryLabel;
+      for (const group of toolsTree) {
+        const found = group.items.find(i => i.id === toolId);
+        if (found) {
+          targetItem = found;
+          if (!catLabel) catLabel = group.label;
+          break;
+        }
+      }
+
+      if (!targetItem) return;
+
+      // Switch to focused tool view
+      document.getElementById('landing-view').style.display = 'none';
+      const panel = document.getElementById('focused-tool-panel');
+      panel.style.display = 'flex';
+
+      document.getElementById('tool-icon-slot').innerHTML = toolIcons[toolId] || toolIcons.merge;
+      document.getElementById('panel-tool-name').innerText = targetItem.title;
+      document.getElementById('panel-category-tag').innerText = catLabel || 'PDF Tool';
+      document.getElementById('process-btn-text').innerText = `Apply ${targetItem.title}`;
+
+      // Update options
+      document.getElementById('dynamic-tool-options').innerHTML = toolOptionForms[toolId] || '';
+      document.getElementById('workspace-results').innerHTML = '';
+      hideWorkspaceAlert();
+
+      // Adjust input
+      const fileInput = document.getElementById('file-input');
+      fileInput.multiple = targetItem.multiple;
+      fileInput.accept = targetItem.accept || '*/*';
+
+      // Update panel document indicator
+      if (loadedFiles.length > 0) {
+        document.getElementById('panel-doc-name').innerText = loadedFiles[0].name;
+      } else {
+        document.getElementById('panel-doc-name').innerText = 'No file selected (click Change File or drop above)';
+      }
+
+      // Update multi-file queue visibility
+      document.getElementById('multi-file-queue').style.display = targetItem.multiple && loadedFiles.length > 0 ? 'block' : 'none';
+      renderFileQueue();
+    }
+
+    // File Drag & Drop & Upload handling
+    const heroDropzone = document.getElementById('hero-dropzone');
+    const fileInput = document.getElementById('file-input');
+
+    heroDropzone.addEventListener('dragover', (e) => { e.preventDefault(); heroDropzone.classList.add('dragover'); });
+    heroDropzone.addEventListener('dragleave', () => { heroDropzone.classList.remove('dragover'); });
+    heroDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      heroDropzone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => { handleFiles(e.target.files); });
+
+    function handleFiles(files) {
+      if (!files || files.length === 0) return;
+      let targetItem = null;
+      for (const group of toolsTree) {
+        const found = group.items.find(i => i.id === currentToolId);
+        if (found) { targetItem = found; break; }
+      }
+
+      if (targetItem && targetItem.multiple) {
+        for (const f of files) loadedFiles.push(f);
+      } else {
+        loadedFiles = [files[0]];
+      }
+
+      updateDocumentDock();
+
+      // If in focused tool view, update panel document label
+      if (document.getElementById('focused-tool-panel').style.display === 'flex') {
+        document.getElementById('panel-doc-name').innerText = loadedFiles[0].name;
+      }
+    }
+
+    function updateDocumentDock() {
+      if (loadedFiles.length === 0) {
+        document.getElementById('active-doc-dock').style.display = 'none';
+        document.getElementById('multi-file-queue').style.display = 'none';
+        document.getElementById('dropzone-header').innerText = 'Upload a PDF to Start Working';
+        document.getElementById('dropzone-subtitle').innerText = 'Drag and drop your PDF here, or click anywhere inside this box to browse files. Once uploaded, pick any feature from the sidebar or below to process it.';
+        return;
+      }
+
+      const primary = loadedFiles[0];
+      document.getElementById('active-doc-dock').style.display = 'flex';
+      document.getElementById('dock-file-name').innerText = primary.name;
+      document.getElementById('dock-file-meta').innerText = `${(primary.size / 1024).toFixed(1)} KB • Loaded in Memory • Ready for any tool`;
+
+      document.getElementById('dropzone-header').innerText = `Active Document: ${primary.name}`;
+      document.getElementById('dropzone-subtitle').innerText = `Document is loaded. Choose any feature from the sidebar or from the grid below to process it.`;
+
+      let targetItem = null;
+      for (const group of toolsTree) {
+        const found = group.items.find(i => i.id === currentToolId);
+        if (found) { targetItem = found; break; }
+      }
+
+      if (targetItem && targetItem.multiple) {
+        document.getElementById('multi-file-queue').style.display = 'block';
+        renderFileQueue();
+      } else {
+        document.getElementById('multi-file-queue').style.display = 'none';
+      }
+    }
+
+    function renderFileQueue() {
+      const qEl = document.getElementById('file-queue-list');
+      qEl.innerHTML = '';
+      loadedFiles.forEach((file, index) => {
+        const chip = document.createElement('div');
+        chip.className = 'queue-chip';
+        chip.innerHTML = `
+          <span>📄 <strong>${escapeHtml(file.name)}</strong> (${(file.size / 1024).toFixed(1)} KB)</span>
+          <div class="chip-btns">
+            ${loadedFiles.length > 1 ? `
+              <button class="btn-xs" onclick="moveQueueFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+              <button class="btn-xs" onclick="moveQueueFile(${index}, 1)" ${index === loadedFiles.length - 1 ? 'disabled' : ''}>▼</button>
+            ` : ''}
+            <button class="btn-xs danger" onclick="removeQueueFile(${index})">&times;</button>
+          </div>
+        `;
+        qEl.appendChild(chip);
+      });
+    }
+
+    function moveQueueFile(idx, dir) {
+      const target = idx + dir;
+      if (target < 0 || target >= loadedFiles.length) return;
+      const tmp = loadedFiles[idx];
+      loadedFiles[idx] = loadedFiles[target];
+      loadedFiles[target] = tmp;
+      updateDocumentDock();
+    }
+
+    function removeQueueFile(idx) {
+      loadedFiles.splice(idx, 1);
+      updateDocumentDock();
+    }
+
+    function clearLoadedDocument() {
+      loadedFiles = [];
+      document.getElementById('file-input').value = '';
+      updateDocumentDock();
+      hideWorkspaceAlert();
+      showLandingView();
+    }
+
+    // Tool Processing Action
+    async function executeCurrentTool() {
+      hideWorkspaceAlert();
+      const btn = document.getElementById('process-doc-btn');
+
+      if (currentToolId === 'texttopdf') {
+        const val = document.getElementById('opt-text-val') ? document.getElementById('opt-text-val').value : '';
+        if (loadedFiles.length === 0 && !val.trim()) {
+          showWorkspaceAlert("Please enter text or upload a text file.", true);
+          return;
+        }
+      } else if (loadedFiles.length === 0) {
+        showWorkspaceAlert("Please upload or drag a PDF document first.", true);
+        return;
+      }
+
+      btn.disabled = true;
+
+      try {
+        const formData = new FormData();
+        const headers = getAuthHeaders();
+
+        if (currentToolId === 'merge') {
+          loadedFiles.forEach(f => formData.append("files", f));
+          const res = await fetch("/api/v1/pdf/merge", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "merged.pdf");
+        } else if (currentToolId === 'split') {
+          formData.append("file", loadedFiles[0]);
+          const ranges = document.getElementById('opt-split-ranges').value;
+          if (ranges) formData.append("ranges", ranges);
+          const res = await fetch("/api/v1/pdf/split", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "split.zip");
+        } else if (currentToolId === 'rotate') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("angle", document.getElementById('opt-rotate-angle').value);
+          const pages = document.getElementById('opt-rotate-pages').value;
+          if (pages) formData.append("pages", pages);
+          const res = await fetch("/api/v1/pdf/rotate", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "rotated.pdf");
+        } else if (currentToolId === 'extract') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("pages", document.getElementById('opt-extract-pages').value);
+          const res = await fetch("/api/v1/pdf/extract", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "extracted.pdf");
+        } else if (currentToolId === 'remove') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("pages", document.getElementById('opt-remove-pages').value);
+          const res = await fetch("/api/v1/pdf/remove", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "pages_removed.pdf");
+        } else if (currentToolId === 'reorder') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("order", document.getElementById('opt-reorder-pages').value);
+          const res = await fetch("/api/v1/pdf/reorder", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "reordered.pdf");
+        } else if (currentToolId === 'reverse') {
+          formData.append("file", loadedFiles[0]);
+          const res = await fetch("/api/v1/pdf/reverse", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "reversed.pdf");
+        } else if (currentToolId === 'crop') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("top", document.getElementById('opt-crop-top').value);
+          formData.append("bottom", document.getElementById('opt-crop-bottom').value);
+          formData.append("left", document.getElementById('opt-crop-left').value);
+          formData.append("right", document.getElementById('opt-crop-right').value);
+          const res = await fetch("/api/v1/pdf/crop", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "cropped.pdf");
+        } else if (currentToolId === 'scale') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("size", document.getElementById('opt-scale-size').value);
+          const res = await fetch("/api/v1/pdf/scale", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "scaled.pdf");
+        } else if (currentToolId === 'watermark') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("text", document.getElementById('opt-wm-text').value);
+          formData.append("font_size", document.getElementById('opt-wm-size').value);
+          formData.append("angle", document.getElementById('opt-wm-angle').value);
+          const pages = document.getElementById('opt-wm-pages').value;
+          if (pages) formData.append("pages", pages);
+          const res = await fetch("/api/v1/pdf/watermark", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "watermarked.pdf");
+        } else if (currentToolId === 'pagenumbers') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("position", document.getElementById('opt-pn-pos').value);
+          formData.append("format", document.getElementById('opt-pn-fmt').value);
+          const res = await fetch("/api/v1/pdf/page-numbers", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "numbered.pdf");
+        } else if (currentToolId === 'imagetopdf') {
+          loadedFiles.forEach(f => formData.append("files", f));
+          const res = await fetch("/api/v1/pdf/images-to-pdf", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "images_converted.pdf");
+        } else if (currentToolId === 'texttopdf') {
+          if (loadedFiles.length > 0) formData.append("file", loadedFiles[0]);
+          else formData.append("text", document.getElementById('opt-text-val').value);
+          const res = await fetch("/api/v1/pdf/text-to-pdf", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "text_document.pdf");
+        } else if (currentToolId === 'pdftotext') {
+          formData.append("file", loadedFiles[0]);
+          const res = await fetch("/api/v1/pdf/pdf-to-text", { method: "POST", headers, body: formData });
+          const json = await res.json();
+          document.getElementById('workspace-results').innerHTML = `
+            <div class="form-group">
+              <label>Extracted Document Text:</label>
+              <textarea class="form-control" rows="10" readonly style="font-family: monospace;">${escapeHtml(json.text)}</textarea>
+            </div>
+          `;
+          showWorkspaceAlert("Text successfully extracted.", false);
+        } else if (currentToolId === 'extractimages') {
+          formData.append("file", loadedFiles[0]);
+          const res = await fetch("/api/v1/pdf/extract-images", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "extracted_images.zip");
+        } else if (currentToolId === 'encrypt') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("password", document.getElementById('opt-enc-pass').value);
+          const own = document.getElementById('opt-enc-owner').value;
+          if (own) formData.append("owner_password", own);
+          const res = await fetch("/api/v1/pdf/encrypt", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "protected.pdf");
+        } else if (currentToolId === 'decrypt') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("password", document.getElementById('opt-dec-pass').value);
+          const res = await fetch("/api/v1/pdf/decrypt", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "unlocked.pdf");
+        } else if (currentToolId === 'flatten') {
+          formData.append("file", loadedFiles[0]);
+          const res = await fetch("/api/v1/pdf/flatten", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "flattened.pdf");
+        } else if (currentToolId === 'redact') {
+          formData.append("file", loadedFiles[0]);
+          formData.append("terms", document.getElementById('opt-redact-terms').value);
+          const res = await fetch("/api/v1/pdf/redact", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "redacted.pdf");
+        } else if (currentToolId === 'compress') {
+          formData.append("file", loadedFiles[0]);
+          const res = await fetch("/api/v1/pdf/compress", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "compressed.pdf");
+        } else if (currentToolId === 'compare') {
+          if (loadedFiles.length < 2) {
+            showWorkspaceAlert("Please upload 2 PDF documents to compare.", true);
+            btn.disabled = false;
+            return;
+          }
+          formData.append("file1", loadedFiles[0]);
+          formData.append("file2", loadedFiles[1]);
+          const res = await fetch("/api/v1/pdf/compare", { method: "POST", headers, body: formData });
+          const json = await res.json();
+          document.getElementById('workspace-results').innerHTML = `
+            <table class="data-table">
+              <tr><th>Analysis Summary</th><td>${escapeHtml(json.summary)}</td></tr>
+              <tr><th>File 1 Size</th><td>${json.size_doc1_bytes} bytes</td></tr>
+              <tr><th>File 2 Size</th><td>${json.size_doc2_bytes} bytes</td></tr>
+              <tr><th>File 1 Pages</th><td>${json.page_count_doc1}</td></tr>
+              <tr><th>File 2 Pages</th><td>${json.page_count_doc2}</td></tr>
+              <tr><th>Text Identical</th><td>${json.text_identical ? 'Yes' : 'No'}</td></tr>
+            </table>
+          `;
+          showWorkspaceAlert("Comparison completed.", false);
+        } else if (currentToolId === 'metadata') {
+          formData.append("file", loadedFiles[0]);
+          const title = document.getElementById('opt-meta-title').value;
+          const author = document.getElementById('opt-meta-author').value;
+          const subject = document.getElementById('opt-meta-subject').value;
+          const keywords = document.getElementById('opt-meta-keywords').value;
+          if (title) formData.append("title", title);
+          if (author) formData.append("author", author);
+          if (subject) formData.append("subject", subject);
+          if (keywords) formData.append("keywords", keywords);
+          const res = await fetch("/api/v1/pdf/metadata/update", { method: "POST", headers, body: formData });
+          await downloadResponse(res, "updated_metadata.pdf");
+        }
+      } catch (err) {
+        showWorkspaceAlert("Error processing document: " + err.message, true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function readMetaAction() {
+      if (loadedFiles.length === 0) {
+        showWorkspaceAlert("Please upload a PDF document first.", true);
+        return;
+      }
+      hideWorkspaceAlert();
+      const formData = new FormData();
+      formData.append("file", loadedFiles[0]);
+      try {
+        const res = await fetch("/api/v1/pdf/metadata/read", { method: "POST", headers: getAuthHeaders(), body: formData });
+        if (!res.ok) {
+          const err = await res.json();
+          showWorkspaceAlert(err.error || "Failed to inspect metadata", true);
+          return;
+        }
+        const data = await res.json();
+        document.getElementById('opt-meta-title').value = data.title || '';
+        document.getElementById('opt-meta-author').value = data.author || '';
+        document.getElementById('opt-meta-subject').value = data.subject || '';
+        document.getElementById('opt-meta-keywords').value = data.keywords || '';
+
+        document.getElementById('workspace-results').innerHTML = `
+          <table class="data-table">
+            <tr><th>PDF Version</th><td>${escapeHtml(data.version || 'Unknown')}</td></tr>
+            <tr><th>Page Count</th><td>${data.page_count}</td></tr>
+            <tr><th>Creator</th><td>${escapeHtml(data.creator || 'None')}</td></tr>
+            <tr><th>Producer</th><td>${escapeHtml(data.producer || 'None')}</td></tr>
+            <tr><th>Created Date</th><td>${escapeHtml(data.creation_date || 'None')}</td></tr>
+            <tr><th>Modified Date</th><td>${escapeHtml(data.modification_date || 'None')}</td></tr>
+          </table>
+        `;
+        showWorkspaceAlert("Document metadata loaded.", false);
+      } catch (err) {
+        showWorkspaceAlert("Error: " + err.message, true);
+      }
+    }
+
+    async function stripMetaAction() {
+      if (loadedFiles.length === 0) {
+        showWorkspaceAlert("Please upload a PDF document first.", true);
+        return;
+      }
+      hideWorkspaceAlert();
+      const formData = new FormData();
+      formData.append("file", loadedFiles[0]);
+      try {
+        const res = await fetch("/api/v1/pdf/metadata/strip", { method: "POST", headers: getAuthHeaders(), body: formData });
+        await downloadResponse(res, "stripped_metadata.pdf");
+      } catch (err) {
+        showWorkspaceAlert("Error: " + err.message, true);
+      }
+    }
+
+    async function downloadResponse(response, fallbackName) {
+      if (!response.ok) {
+        let errMessage = 'Action failed';
+        try {
+          const errJson = await response.json();
+          errMessage = errJson.error || errMessage;
+        } catch (_) {}
+        showWorkspaceAlert(errMessage, true);
+        return;
+      }
+
+      const disposition = response.headers.get("content-disposition");
+      let filename = fallbackName;
+      if (disposition && disposition.includes("filename=")) {
+        const match = disposition.match(/filename="?([^";]+)"?/);
+        if (match && match[1]) filename = match[1];
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      showWorkspaceAlert("Processing complete! Download triggered.", false);
+    }
+
+    function showWorkspaceAlert(msg, isError) {
+      const el = document.getElementById('workspace-alert');
+      el.className = `alert ${isError ? 'error' : 'success'}`;
+      el.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24">
+          ${isError ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' : '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'}
+        </svg>
+        <span>${escapeHtml(msg)}</span>
+      `;
+    }
+
+    function hideWorkspaceAlert() {
+      const el = document.getElementById('workspace-alert');
+      el.className = 'alert';
+      el.innerText = '';
+    }
+
+    function escapeHtml(t) {
+      const div = document.createElement('div');
+      div.innerText = t || '';
+      return div.innerHTML;
+    }
+
+    function getAuthHeaders() {
+      const h = {};
+      if (sessionToken) {
+        h['Authorization'] = `Bearer ${sessionToken}`;
+      }
+      return h;
+    }
+
+    // Auth gate functions
+    async function checkAuthSession() {
+      if (!sessionToken) {
+        showLoginGate();
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/auth/status', {
+          headers: { 'Authorization': `Bearer ${sessionToken}` }
+        });
+        if (res.ok) {
+          const status = await res.json();
+          if (status.logged_in) {
+            currentUsername = status.email || status.username || 'admin@podpdf.local';
+            sessionStorage.setItem('podpdf_user', currentUsername);
+            unlockApp();
+          } else {
+            showLoginGate();
+          }
+        } else {
+          showLoginGate();
+        }
+      } catch (_) {
+        showLoginGate();
+      }
+    }
+
+    function showLoginGate() {
+      sessionToken = '';
+      currentUsername = '';
+      sessionStorage.removeItem('podpdf_token');
+      sessionStorage.removeItem('podpdf_user');
+      document.getElementById('login-gate').style.display = 'flex';
+      document.getElementById('authenticated-app').style.display = 'none';
+    }
+
+    function unlockApp() {
+      document.getElementById('login-gate').style.display = 'none';
+      document.getElementById('authenticated-app').style.display = 'flex';
+      document.getElementById('header-user').innerText = currentUsername || 'admin@podpdf.local';
+      buildSidebarTree();
+      showLandingView();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-password').value;
+      const alertEl = document.getElementById('login-alert');
+      const btn = document.getElementById('login-btn');
+
+      alertEl.style.display = 'none';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: pass })
+        });
+        const json = await res.json();
+        if (res.ok) {
+          sessionToken = json.token;
+          currentUsername = json.email || json.username;
+          sessionStorage.setItem('podpdf_token', json.token);
+          sessionStorage.setItem('podpdf_user', currentUsername);
+          unlockApp();
+        } else {
+          alertEl.className = 'alert error';
+          alertEl.innerHTML = `<span>${escapeHtml(json.error || 'Invalid credentials')}</span>`;
+        }
+      } catch (err) {
+        alertEl.className = 'alert error';
+        alertEl.innerHTML = `<span>Error: ${escapeHtml(err.message)}</span>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await fetch('/api/v1/auth/logout', { method: 'POST', headers: getAuthHeaders() });
+      } catch (_) {}
+      showLoginGate();
+    }
+
+    // Modal helpers
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function closeOnBackdrop(e, id) { if (e.target.id === id) closeModal(id); }
+
+    function openSettingsModal() {
+      openModal('settings-modal');
+      fetchSystemInfo();
+      fetchApiKeys();
+      fetchCustomHeaders();
+    }
+
+    function switchSettingsTab(tab, event) {
+      document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById('tab-account').style.display = tab === 'account' ? 'block' : 'none';
+      document.getElementById('tab-apikeys').style.display = tab === 'apikeys' ? 'block' : 'none';
+      document.getElementById('tab-headers').style.display = tab === 'headers' ? 'block' : 'none';
+      document.getElementById('tab-system').style.display = tab === 'system' ? 'block' : 'none';
+      if (tab === 'headers') fetchCustomHeaders();
+    }
+
+    let currentSecurityEnabled = true;
+
+    async function fetchSystemInfo() {
+      try {
+        const res = await fetch('/api/v1/system/info');
+        if (res.ok) {
+          const info = await res.json();
+          currentSecurityEnabled = info.auth_enabled;
+          document.getElementById('sys-version').innerText = info.version;
+          const authLabel = document.getElementById('sys-auth');
+          const toggleBtn = document.getElementById('toggle-security-btn');
+          if (authLabel) {
+            authLabel.innerText = info.auth_enabled ? 'Active (API Key Required)' : 'Disabled (Open API)';
+            authLabel.style.color = info.auth_enabled ? 'var(--success)' : 'var(--text-muted)';
+          }
+          if (toggleBtn) {
+            toggleBtn.innerText = info.auth_enabled ? 'Disable' : 'Enable';
+          }
+        }
+      } catch (_) {}
+    }
+
+    async function toggleSecurityMode() {
+      const alertEl = document.getElementById('sys-toggle-alert');
+      if (alertEl) alertEl.style.display = 'none';
+      try {
+        const res = await fetch('/api/v1/system/security-mode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+          body: JSON.stringify({ enabled: !currentSecurityEnabled })
+        });
+        if (res.ok) {
+          await fetchSystemInfo();
+          if (alertEl) {
+            alertEl.className = 'alert success';
+            alertEl.innerHTML = `<span>Security Mode updated to: <strong>${currentSecurityEnabled ? 'Active (API Key Required)' : 'Disabled (Open API)'}</strong></span>`;
+          }
+        } else {
+          const err = await res.json();
+          if (alertEl) {
+            alertEl.className = 'alert error';
+            alertEl.innerHTML = `<span>${escapeHtml(err.error || 'Failed to toggle')}</span>`;
+          }
+        }
+      } catch (e) {
+        if (alertEl) {
+          alertEl.className = 'alert error';
+          alertEl.innerHTML = `<span>Error: ${escapeHtml(e.message)}</span>`;
+        }
+      }
+    }
+
+    async function fetchApiKeys() {
+      const tbody = document.getElementById('keys-tbody');
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);">Loading keys...</td></tr>';
+      try {
+        const res = await fetch('/api/v1/auth/api-keys', { headers: getAuthHeaders() });
+        if (res.ok) {
+          const keys = await res.json();
+          tbody.innerHTML = '';
+          if (keys.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);">No active API keys found.</td></tr>';
+            return;
+          }
+          keys.forEach(k => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${escapeHtml(k.name)}</td>
+              <td><code>${escapeHtml(k.key_prefix)}</code></td>
+              <td>${escapeHtml(k.created_at)}</td>
+              <td><button class="btn-xs danger" onclick="revokeApiKey('${k.id}')">Revoke</button></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (_) {
+        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--danger);">Failed to load keys.</td></tr>';
+      }
+    }
+
+    async function createApiKey() {
+      const name = document.getElementById('new-key-name').value.trim();
+      const alertEl = document.getElementById('set-keys-alert');
+      alertEl.style.display = 'none';
+
+      if (!name) {
+        alertEl.className = 'alert error';
+        alertEl.innerHTML = `<span>Please provide a name for the key.</span>`;
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/auth/api-keys', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+          body: JSON.stringify({ name })
+        });
+        if (res.ok) {
+          const json = await res.json();
+          document.getElementById('new-key-display').style.display = 'block';
+          document.getElementById('new-key-value').value = json.key;
+          document.getElementById('new-key-name').value = '';
+          fetchApiKeys();
+        } else {
+          const err = await res.json();
+          alertEl.className = 'alert error';
+          alertEl.innerHTML = `<span>${escapeHtml(err.error || 'Failed to create key')}</span>`;
+        }
+      } catch (e) {
+        alertEl.className = 'alert error';
+        alertEl.innerHTML = `<span>Error: ${escapeHtml(e.message)}</span>`;
+      }
+    }
+
+    async function revokeApiKey(id) {
+      if (!confirm('Are you sure you want to revoke this API key?')) return;
+      try {
+        const res = await fetch(`/api/v1/auth/api-keys/${id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+        if (res.ok) fetchApiKeys();
+      } catch (_) {}
+    }
+
+    async function saveCredentials() {
+      const new_email = document.getElementById('set-new-email').value.trim() || undefined;
+      const current_password = document.getElementById('set-cur-password').value;
+      const new_password = document.getElementById('set-new-password').value || undefined;
+      const alertEl = document.getElementById('set-account-alert');
+      alertEl.style.display = 'none';
+
+      if (!current_password) {
+        alertEl.className = 'alert error';
+        alertEl.innerHTML = `<span>Current password is required.</span>`;
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/auth/change-credentials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+          body: JSON.stringify({ new_email, current_password, new_password })
+        });
+        const json = await res.json();
+        if (res.ok) {
+          alertEl.className = 'alert success';
+          alertEl.innerHTML = `<span>Credentials updated successfully!</span>`;
+          if (new_email) {
+            currentUsername = new_email;
+            sessionStorage.setItem('podpdf_user', new_email);
+            document.getElementById('header-user').innerText = new_email;
+          }
+          document.getElementById('set-cur-password').value = '';
+          document.getElementById('set-new-password').value = '';
+        } else {
+          alertEl.className = 'alert error';
+          alertEl.innerHTML = `<span>${escapeHtml(json.error || 'Update failed')}</span>`;
+        }
+      } catch (e) {
+        alertEl.className = 'alert error';
+        alertEl.innerHTML = `<span>Error: ${escapeHtml(e.message)}</span>`;
+      }
+    }
+
+    let customHeadersMap = {};
+
+    async function fetchCustomHeaders() {
+      const tbody = document.getElementById('headers-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);">Loading headers...</td></tr>';
+      try {
+        const res = await fetch('/api/v1/system/headers');
+        if (res.ok) {
+          customHeadersMap = await res.json();
+          renderCustomHeadersTable();
+        }
+      } catch (_) {
+        tbody.innerHTML = '<tr><td colspan="3" style="color:var(--danger);">Failed to load custom headers.</td></tr>';
+      }
+    }
+
+    function renderCustomHeadersTable() {
+      const tbody = document.getElementById('headers-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const keys = Object.keys(customHeadersMap);
+      if (keys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);">No custom response headers configured.</td></tr>';
+        return;
+      }
+      keys.forEach(k => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><code>${escapeHtml(k)}</code></td>
+          <td><code>${escapeHtml(customHeadersMap[k])}</code></td>
+          <td><button class="btn-xs danger" onclick="removeCustomHeaderItem('${escapeHtml(k)}')">Remove</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addCustomHeaderItem() {
+      const kInput = document.getElementById('new-header-key');
+      const vInput = document.getElementById('new-header-val');
+      const k = kInput.value.trim();
+      const v = vInput.value.trim();
+      if (!k || !v) return;
+      customHeadersMap[k] = v;
+      kInput.value = '';
+      vInput.value = '';
+      renderCustomHeadersTable();
+    }
+
+    function removeCustomHeaderItem(key) {
+      delete customHeadersMap[key];
+      renderCustomHeadersTable();
+    }
+
+    async function saveCustomHeaders() {
+      const alertEl = document.getElementById('set-headers-alert');
+      if (alertEl) alertEl.style.display = 'none';
+      try {
+        const res = await fetch('/api/v1/system/headers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+          body: JSON.stringify({ headers: customHeadersMap })
+        });
+        const json = await res.json();
+        if (res.ok) {
+          if (alertEl) {
+            alertEl.className = 'alert success';
+            alertEl.innerHTML = `<span>${escapeHtml(json.message || 'Custom headers saved successfully!')}</span>`;
+          }
+        } else {
+          if (alertEl) {
+            alertEl.className = 'alert error';
+            alertEl.innerHTML = `<span>${escapeHtml(json.error || 'Failed to save headers')}</span>`;
+          }
+        }
+      } catch (e) {
+        if (alertEl) {
+          alertEl.className = 'alert error';
+          alertEl.innerHTML = `<span>Error: ${escapeHtml(e.message)}</span>`;
+        }
+      }
+    }
+
+    function toggleTheme() {
+      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      const target = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', target);
+      const icon = document.getElementById('theme-icon');
+      if (target === 'dark') {
+        icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+      } else {
+        icon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+      }
+      localStorage.setItem('podpdf_theme', target);
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('sidebar-search');
+        if (searchInput) searchInput.focus();
+      }
+    });
+
+    // Startup
+    (function init() {
+      const savedTheme = localStorage.getItem('podpdf_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      checkAuthSession();
+    })();
+  </script>
+</body>
+</html>
