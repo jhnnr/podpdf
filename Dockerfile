@@ -1,7 +1,8 @@
 FROM rust:bookworm AS builder
 WORKDIR /app
 
-COPY Cargo.toml Cargo.lock config.toml ./
+COPY Cargo.toml Cargo.lock ./
+COPY config*.toml ./
 COPY src ./src
 RUN cargo build --release
 
@@ -13,7 +14,8 @@ WORKDIR /home/podpdf
 RUN mkdir -p /home/podpdf/data
 
 COPY --from=builder /app/target/release/podpdf /usr/local/bin/podpdf
-COPY --from=builder /app/config.toml ./config.toml
+COPY --from=builder /app/config.example.toml ./config.example.toml
+RUN cp /home/podpdf/config.example.toml /home/podpdf/config.toml
 
 ENV HOST=0.0.0.0
 ENV PORT=8080
