@@ -328,8 +328,7 @@ fn hash_string(val: &str) -> String {
 }
 
 fn format_timestamp_now() -> String {
-    match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
-        Ok(d) => format!("Unix timestamp {}", d.as_secs()),
-        Err(_) => "Unknown".to_string(),
-    }
+    chrono::Utc::now()
+        .format("%b %d, %Y, %H:%M:%S UTC")
+        .to_string()
 }

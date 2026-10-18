@@ -4,6 +4,8 @@ use std::env;
 use std::net::SocketAddr;
 use std::path::Path;
 
+pub const HARDENED_AUTH_STORE_PATH: &str = "data/auth_store.json";
+
 /// Server runtime configuration loaded exclusively from .env and environment variables.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
@@ -25,7 +27,7 @@ impl Default for Config {
             max_payload_size: 50 * 1024 * 1024, // 50 MB
             log_level: "info".to_string(),
             auth_enabled: true,
-            auth_store_path: "data/auth_store.json".to_string(),
+            auth_store_path: HARDENED_AUTH_STORE_PATH.to_string(),
             custom_headers: HashMap::new(),
         }
     }
@@ -62,9 +64,8 @@ impl Config {
                 auth_enabled_str.eq_ignore_ascii_case("true") || auth_enabled_str == "1";
         }
 
-        if let Some(auth_store) = get_val("AUTH_STORE_PATH") {
-            config.auth_store_path = auth_store;
-        }
+        // AUTH_STORE_PATH is hardened in source code
+        config.auth_store_path = HARDENED_AUTH_STORE_PATH.to_string();
 
         if let Some(log_level) = get_val("RUST_LOG") {
             config.log_level = log_level;
@@ -111,12 +112,11 @@ impl Config {
             .collect::<Vec<_>>()
             .join(";");
 
-        let updates: [(&str, String); 6] = [
+        let updates: [(&str, String); 5] = [
             ("HOST", self.host.clone()),
             ("PORT", self.port.to_string()),
             ("MAX_PAYLOAD_SIZE", self.max_payload_size.to_string()),
             ("AUTH_ENABLED", self.auth_enabled.to_string()),
-            ("AUTH_STORE_PATH", self.auth_store_path.clone()),
             ("CUSTOM_HEADERS", headers_str),
         ];
 

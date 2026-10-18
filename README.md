@@ -145,7 +145,6 @@ Configuration is managed solely through environment variables and the `.env` fil
 | `HOST` | `0.0.0.0` | Bind IP address. |
 | `MAX_PAYLOAD_SIZE` | `52428800` | Maximum upload size in bytes (50 MB default). |
 | `AUTH_ENABLED` | `true` | When `true`, enforces API key authentication on `/api/v1/pdf/*`. |
-| `AUTH_STORE_PATH` | `data/auth_store.json` | Persistent user accounts and hashed API keys file path. |
 | `CUSTOM_HEADERS` | `X-Content-Type-Options:nosniff;X-Frame-Options:DENY` | Semicolon-separated HTTP response headers. |
 | `RUST_LOG` | `info` | Logging filter (`error`, `warn`, `info`, `debug`, `trace`). |
 | `DOCKER_IMAGE` | `sugoi13/podpdf:latest` | Target Docker Hub image in `docker-compose.yml`. |
